@@ -1,4 +1,3 @@
-This repo contains some analyses for the TextWiller R package.
 #### Structure
  - TextWiller/
 	 - analysis/
