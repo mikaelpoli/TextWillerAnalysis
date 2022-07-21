@@ -1,0 +1,16 @@
+#### Packages ####
+
+library(tidyverse)
+
+#### wd ####
+
+# setwd("./code")
+
+#### DATA #### 
+
+#--- Arjuna stopwords
+load("../results/stopwords_ar.rda")
+
+#--- TextWiller stopwords
+
+
