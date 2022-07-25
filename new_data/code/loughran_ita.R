@@ -100,25 +100,21 @@ colnames(lexicon_loughran_ita) <- c("x", "y")
 
 #### Save ####
 
-save(lexicon_loughran_ita, file = "./results/lexicon_loughran_ita.rda")
+save(lexicon_loughran_ita, file = "../results/lexicon_loughran_ita.rda")
 
 #### BUILD POSITIVE-NEGATIVE DICTIONARY ####
 
-lexicon_loughran_ita_pn <- lexicon_loughran_ita[c(lexicon_loughran_ita$sentiment == "positive" |
-                                                    lexicon_loughran_ita$sentiment == "negative"),]
+lexicon_loughran_ita_pn <- lexicon_loughran_ita[c(lexicon_loughran_ita$y == "positive" |
+                                                    lexicon_loughran_ita$y == "negative"),]
 
 #--- Assign weights to sentiment
 # NOTE: 
 # -1 = negative
 # +1 = positive
 
-lexicon_loughran_ita_pn$sentiment <- gsub("positive", "1", lexicon_loughran_ita_pn$sentiment)
-lexicon_loughran_ita_pn$sentiment <- gsub("negative", "-1", lexicon_loughran_ita_pn$sentiment)
-lexicon_loughran_ita_pn$sentiment <- as.numeric(lexicon_loughran_ita_pn$sentiment)
-
-#--- Change column names to be compatible with sentimentr::sentiment 
-
-colnames(lexicon_loughran_ita_pn) <- c("x", "y")
+lexicon_loughran_ita_pn$y <- gsub("positive", "1", lexicon_loughran_ita_pn$y)
+lexicon_loughran_ita_pn$y <- gsub("negative", "-1", lexicon_loughran_ita_pn$y)
+lexicon_loughran_ita_pn$y <- as.numeric(lexicon_loughran_ita_pn$y)
 
 #--- Turn into data.table
 
@@ -126,16 +122,16 @@ lexicon_loughran_ita_pn <- setDT(lexicon_loughran_ita_pn)
 
 #### Save ####
 
-save(lexicon_loughran_ita_pn, file = "./results/lexicon_loughran_ita_pn.rda")
+save(lexicon_loughran_ita_pn, file = "../results/lexicon_loughran_ita_pn.rda")
 
 #### BUILD UNCERTAINTY DICTIONARY ####
 
-u <- lexicon_loughran_ita[lexicon_loughran_ita$sentiment == "uncertainty",]
-u <- as.character(u$word)
-w <- lexicon_loughran_ita[lexicon_loughran_ita$sentiment == "weak",]
-w <- as.character(w$word)
-s <- lexicon_loughran_ita[lexicon_loughran_ita$sentiment == "strong",]
-s <- as.character(s$word)
+u <- lexicon_loughran_ita[lexicon_loughran_ita$y == "uncertainty",]
+u <- as.character(u$x)
+w <- lexicon_loughran_ita[lexicon_loughran_ita$y == "weak",]
+w <- as.character(w$x)
+s <- lexicon_loughran_ita[lexicon_loughran_ita$y == "strong",]
+s <- as.character(s$x)
 
 #--- Check differences between vectors 
 
@@ -187,7 +183,7 @@ rm(s, u, w, s_weight, u_weight, w_weight, u_s, u_w)
 
 #### Save #### 
 
-save(lexicon_loughran_ita_u, file = "./results/lexicon_loughran_ita_u.rda")
+save(lexicon_loughran_ita_u, file = "../results/lexicon_loughran_ita_u.rda")
 
 #### sentimentr::sentiment test ####
 
@@ -195,10 +191,18 @@ save(lexicon_loughran_ita_u, file = "./results/lexicon_loughran_ita_u.rda")
 
 test_loughran <- c("ha rinunciato all'offerta", "mi sembra vada bene")
 
-# Create Loughran (positive-negative) italian dictionary 
+# Create Loughran (positive-negative) italian dictionary and run test 
 
 ita_pn <- as_key(lexicon_loughran_ita_pn, 
        comparison = NULL,
        sentiment = T)
 
 sentimentr::sentiment(test_loughran, polarity_dt = ita_pn)
+
+# Create Loughran uncertainty italian dictionary 
+
+ita_u <- as_key(lexicon_loughran_ita_u, 
+                 comparison = NULL,
+                 sentiment = T)
+
+sentimentr::sentiment(test_loughran, polarity_dt = ita_u)
