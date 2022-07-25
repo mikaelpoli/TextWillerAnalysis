@@ -10,6 +10,7 @@
 			 - code/
 			 - data/
 			 - results/
+				 - README
 			 - README
 #### Description
 - *dependencies/*: analysis of what functions and packages are used in building TextWiller's own functions.
