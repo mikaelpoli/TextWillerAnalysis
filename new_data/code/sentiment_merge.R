@@ -81,4 +81,14 @@ rm(lexicon_ita_p, lexicon_ita_n, lexicon_ita_u)
 
 #### Save results ####
 
-save(lexicon_ita, file = "../results/lexicon_ita.rda")
+save(lexicon_ita, file = "../results/lexicon_madda_loughran_ita.rda")
+
+#### As list ####
+
+#--- Convert to list so it is compatible with TextWiller::sentiment
+
+lexicon_ita_list <- as.list(lexicon_ita)
+
+#### Save resuls ####
+
+save(lexicon_ita_list, file = "../results/lexicon_madda_loughran_ita_list.rda")

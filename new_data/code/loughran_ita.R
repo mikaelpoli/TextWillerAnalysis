@@ -1,5 +1,8 @@
 #### Packages ####
 
+library(data.table)
+library(sentimentr)
+
 #### wd ####
 
 # setwd("../new_data/code")
@@ -26,7 +29,7 @@ lm_strong <- read.csv("../data/lm_strong_modal.csv", header = F)
 
 lm_weak <- read.csv("../data/lm_weak_modal.csv", header = F)
 
-#### BUILD DICTIONARY ####
+#### BUILD FULL DICTIONARY ####
 
 #--- Negative words and sentiment
 
@@ -91,8 +94,111 @@ rm(lm_ita,
    strong,
    weak)
 
-#### SAVE RESULTS ####
+#--- Change column names to be compatible with sentimentr::sentiment 
 
-save(lexicon_loughran_ita, file = "../results/lexicon_loughran_ita.rda")
+colnames(lexicon_loughran_ita) <- c("x", "y")
 
+#### Save ####
 
+save(lexicon_loughran_ita, file = "./results/lexicon_loughran_ita.rda")
+
+#### BUILD POSITIVE-NEGATIVE DICTIONARY ####
+
+lexicon_loughran_ita_pn <- lexicon_loughran_ita[c(lexicon_loughran_ita$sentiment == "positive" |
+                                                    lexicon_loughran_ita$sentiment == "negative"),]
+
+#--- Assign weights to sentiment
+# NOTE: 
+# -1 = negative
+# +1 = positive
+
+lexicon_loughran_ita_pn$sentiment <- gsub("positive", "1", lexicon_loughran_ita_pn$sentiment)
+lexicon_loughran_ita_pn$sentiment <- gsub("negative", "-1", lexicon_loughran_ita_pn$sentiment)
+lexicon_loughran_ita_pn$sentiment <- as.numeric(lexicon_loughran_ita_pn$sentiment)
+
+#--- Change column names to be compatible with sentimentr::sentiment 
+
+colnames(lexicon_loughran_ita_pn) <- c("x", "y")
+
+#--- Turn into data.table
+
+lexicon_loughran_ita_pn <- setDT(lexicon_loughran_ita_pn)
+
+#### Save ####
+
+save(lexicon_loughran_ita_pn, file = "./results/lexicon_loughran_ita_pn.rda")
+
+#### BUILD UNCERTAINTY DICTIONARY ####
+
+u <- lexicon_loughran_ita[lexicon_loughran_ita$sentiment == "uncertainty",]
+u <- as.character(u$word)
+w <- lexicon_loughran_ita[lexicon_loughran_ita$sentiment == "weak",]
+w <- as.character(w$word)
+s <- lexicon_loughran_ita[lexicon_loughran_ita$sentiment == "strong",]
+s <- as.character(s$word)
+
+#--- Check differences between vectors 
+
+u_w <- setdiff(w, u)
+
+# all words in w are already contained in u
+
+u_s <- setdiff(s, u)
+
+# all words in s are novel compared to u
+
+#--- Assign weights
+
+# NOTE: weights are based on "strength of centrainty", where:
+# -1 = weak modal
+# 0 = uncertainty
+# +1 = strong modal
+
+w_weight <- rep(-1, length(w))
+u_weight <- rep(0, length(u))
+s_weight <- rep(1, length(s))
+
+#--- Combine weights with character vectors
+
+w <- data.frame(w, w_weight)
+colnames(w) <- c("word", "sentiment")
+
+u <- data.frame(u, u_weight)
+colnames(u) <- c("word", "sentiment")
+
+s <- data.frame(s, s_weight)
+colnames(s) <- c("word", "sentiment")
+
+#--- Merge dataframes
+
+lexicon_loughran_ita_u <- data.frame(rbind(w, u, s))
+
+#--- Change column names to be compatible with sentimentr::sentiment 
+
+colnames(lexicon_loughran_ita_u) <- c("x", "y")
+
+#--- Turn into data.table
+
+lexicon_loughran_ita_u <- setDT(lexicon_loughran_ita_u)
+
+# Remove objects 
+
+rm(s, u, w, s_weight, u_weight, w_weight, u_s, u_w)
+
+#### Save #### 
+
+save(lexicon_loughran_ita_u, file = "./results/lexicon_loughran_ita_u.rda")
+
+#### sentimentr::sentiment test ####
+
+# Example phrases 
+
+test_loughran <- c("ha rinunciato all'offerta", "mi sembra vada bene")
+
+# Create Loughran (positive-negative) italian dictionary 
+
+ita_pn <- as_key(lexicon_loughran_ita_pn, 
+       comparison = NULL,
+       sentiment = T)
+
+sentimentr::sentiment(test_loughran, polarity_dt = ita_pn)

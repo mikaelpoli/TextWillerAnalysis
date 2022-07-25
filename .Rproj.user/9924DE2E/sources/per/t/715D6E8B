@@ -1,6 +1,6 @@
 {
     "id": "715D6E8B",
-    "path": "C:/Backup/projects/r/textwiller2.0/analysis/dependencies/code/dependencies.R",
+    "path": "C:/Backup/projects/r/textwiller2.0/analysis/TextWillerAnalysis/dependencies/code/dependencies.R",
     "project_path": "dependencies/code/dependencies.R",
     "type": "r_source",
     "hash": "691311469",
@@ -12,7 +12,7 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "11,15",
+        "cursorPosition": "3,23",
         "scrollLine": "0"
     },
     "folds": "",

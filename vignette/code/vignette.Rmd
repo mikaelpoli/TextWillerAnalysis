@@ -1,0 +1,149 @@
+---
+title: "Text Mining with TextWiller"
+output:
+  html_document: 
+    highlight: tango
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = T)
+X <- T
+
+library(tidyverse)
+library(magrittr)
+library(TextWiller)
+
+load (file = "./data/spritz.Rdata")
+```
+
+TextWiller provides tools for text mining in Italian. This vignette illustrates the usage of each function.
+
+## Functions Overview
+
+TextWiller is made up of six core functions:  
+
+- RTHound  
+- NormalizzaTesti  
+- classificaUtenti  
+- fixTimeStamp  
+- patternExtract  
+  * urlExtract  
+    - shorturl2url  
+- sentiment  
+
+three datasets:  
+
+- ArticoliSperimentazioneanimale  
+- TWsperimentazioneanimale  
+- quotidiani_2_ottobre (tw)  
+
+and nine dictionaries:  
+
+- Sentiment analysis:  
+
+  * `vocabolariMadda`  
+  * `vocabolarioMattivio` (emoticons' scores)  
+  * `vocabolarioMattivio_ori (vocab_scores)` (emoticons' scores)  
+  
+- Text normalization:  
+
+  * `vocabolarioEmote`
+  * `vocabolarioEmoteSorted`  
+  * `itastopwords`
+  
+- Text categorization:  
+
+  * `vocabolarioLuoghi`: as an argument of `classificaUtenti()`, it categorizes each element of a character vector containing names of cities (all Italian cities and some non-Italian ones) according to their location ("Estero" for non-Italian cities, "Nord-ovest", "Nord-est". "Centro", "Sud", "Isole" for Italian cities) 
+  * `vocabolarioLuoghiConSpazi`
+  * `vocabolarioNomiPropri`: as an argument of `classificaUtenti()`, it categorizes each element of a character vector containing Italian first names as either "male" or "female"  
+  
+### Hunt for retweets with `RTHound()`
+
+Call this function to identify the most frequent retweets in your dataset. It also works with generic text vectors to identify multiple instances of the same string.
+
+```{r, echo = X, include = X}
+spritz_text <- spritz %>% # Create dataframe with only text for the spritz Tweets dataset
+  dplyr::pull (text)
+
+RTHound(spritz_text, 
+        S = 3, 
+        L = 1, 
+        hclust.dist = 100, 
+        hclust.method = "complete", 
+        showTopN = 3, 
+        dist = "levenshtein", 
+        verbatim = T)
+```
+
+### Normalize text with `normalizzaTesti()`
+
+```{r, echo = X, include = X}
+spritz_text <- normalizzaTesti (spritz_text)
+
+spritz_text # NOTA: Non riesco a normalizzare le emoji, immagino si tratti della codifica
+```
+
+### Expand short URLs with `urlExtract()`
+
+```{r, echo = X, include = X}
+short_urls <- spritz %>% # create vector of short urls
+  pull (urls_t.co) %>%
+  unlist() %>%
+  na.omit()
+
+long_urls <- shorturl2url(short_urls) # NOTA: Non riesco a debuggare questo
+long_urls <- urlExtract(short_urls) # NOTA: Non riesco a debuggare questo
+```
+
+### Extract regular expressions with `patternExtract()`
+
+```{r}
+users <- spritz %>% # create vector of tweets
+  pull (text) %>%
+  normalizzaTesti() # normalize text
+
+users_n <- patternExtract(users, pattern = "@\w+") 
+
+# NOTA: con questo pattern (è quello riportato nella documentazione) mi dà errore:
+
+```
+
+
+### Categorize text with `classificaUtenti()`
+
+```{r, echo = X, include = X}
+data("vocabolarioLuoghi") # load dictionary
+classificaUtenti (c ("padova", 
+                     "barcellona pozzo di gotto", 
+                     "albignasego", 
+                     "palmanova", 
+                     "asti"), 
+                  vocabolario = vocabolarioLuoghi) # find italian cities' location
+
+data("vocabolarioNomiPropri") # load dictionary
+classificaUtenti (c ("alessio", 
+                     "chiara", 
+                     "giulia", 
+                     "giacomo"), 
+                  vocabolario = vocabolarioNomiPropri) # categorize users' gender based on their italian name
+```
+
+### Perform sentiment analysis with `sentiment()`
+
+```{r, echo = X, include = X}
+sentiment_1 <- TextWiller::sentiment (spritz_text) %>% # sentiment analysis
+  as.numeric () %>%
+  as.data.frame ()
+
+spritz_text <- as.data.frame (spritz_text) # convert to data frame
+
+spritz_text <- spritz_text %>% # create dataframe with only "tweets" and "sentiment" variables
+  tibble::add_column (sentiment = sentiment_1$.) %>%
+  dplyr::rename (spritz_text, tweet = spritz_text)
+
+spritz_text # view dataframe
+
+```
+
