@@ -139,6 +139,12 @@ u_w <- setdiff(w, u)
 
 # all words in w are already contained in u
 
+# Create "u" vector without "w" words
+
+w_u <- setdiff(u, w) 
+
+# ---
+
 u_s <- setdiff(s, u)
 
 # all words in s are novel compared to u
@@ -151,7 +157,7 @@ u_s <- setdiff(s, u)
 # +1 = strong modal
 
 w_weight <- rep(-1, length(w))
-u_weight <- rep(0, length(u))
+u_weight <- rep(0, length(w_u))
 s_weight <- rep(1, length(s))
 
 #--- Combine weights with character vectors
@@ -159,7 +165,7 @@ s_weight <- rep(1, length(s))
 w <- data.frame(w, w_weight)
 colnames(w) <- c("word", "sentiment")
 
-u <- data.frame(u, u_weight)
+u <- data.frame(w_u, u_weight)
 colnames(u) <- c("word", "sentiment")
 
 s <- data.frame(s, s_weight)
@@ -179,7 +185,7 @@ lexicon_loughran_ita_u <- setDT(lexicon_loughran_ita_u)
 
 # Remove objects 
 
-rm(s, u, w, s_weight, u_weight, w_weight, u_s, u_w)
+rm(s, u, w, s_weight, u_weight, w_weight, u_s, u_w, w_u)
 
 #### Save #### 
 
@@ -189,7 +195,8 @@ save(lexicon_loughran_ita_u, file = "../results/lexicon_loughran_ita_u.rda")
 
 # Example phrases 
 
-test_loughran <- c("ha rinunciato all'offerta", "mi sembra vada bene")
+test_loughran <- c("ha rinunciato all'offerta", "mi sembra vada bene", "si può certamente fare",
+                   "di sicuro non funziona")
 
 # Create Loughran (positive-negative) italian dictionary and run test 
 
