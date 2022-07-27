@@ -2,6 +2,7 @@
 
 library(data.table)
 library(sentimentr)
+library(TextWiller)
 
 #### wd ####
 
@@ -212,4 +213,14 @@ ita_u <- as_key(lexicon_loughran_ita_u,
                  comparison = NULL,
                  sentiment = T)
 
-sentimentr::sentiment(test_loughran, polarity_dt = ita_u)
+sentimentr::sentiment(test_loughran, polarity_dt = ita_u) # NOT WORKING?
+
+# Try with example tweet dataset
+
+load("../data/spritz.rdata")
+
+test_tweet <- spritz$text
+test_tweet <- normalizzaTesti(test_tweet)
+
+sentimentr::sentiment(test_tweet, polarity_dt = ita_pn)
+sentimentr::sentiment(test_tweet, polarity_dt = ita_u)
