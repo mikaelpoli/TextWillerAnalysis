@@ -62,3 +62,4 @@ ita_madda <- as_key(madda,
                  sentiment = T)
 
 sentimentr::sentiment(test_madda, polarity_dt = ita_madda)
+
