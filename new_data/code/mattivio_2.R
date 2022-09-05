@@ -2,6 +2,9 @@
 
 library(TextWiller)
 library(janitor)
+library(sentimentr)
+library(tidyverse)
+library(data.table)
 
 #### wd ####
 
@@ -68,3 +71,27 @@ mattivio <- mattivio[!(duplicated(mattivio$keyword) |
 #### Save ####
 
 save(mattivio, file = "../results/mattivio.rda")
+
+#### Sentimentr test ####
+
+## STILL NOT WORKING
+
+# Create dictionary 
+
+dic <- mattivio %>%
+  select(keyword, score) %>%
+  rename(x = keyword, y = score) %>%
+  as.data.table()
+
+dic$x <- tolower(dic$x)
+
+dic <- as_key(dic)
+
+# Create text vector
+
+text <- c("ciao bella", "mi piaci", "wow!!","good","casa", "farabutto!","ti odio")
+
+# Analyze 
+
+sentimentr::sentiment(text, polarity_dt = dic)
+
