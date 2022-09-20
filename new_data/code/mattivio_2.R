@@ -5,6 +5,7 @@ library(janitor)
 library(sentimentr)
 library(tidyverse)
 library(data.table)
+library(textclean)
 
 #### wd ####
 
@@ -14,9 +15,9 @@ library(data.table)
 
 #--- Vocabolario Mattivio
 
-data("vocabolarioMattivio")
+# data("vocabolarioMattivio")
 
-save(vocabolarioMattivio, file = "../data/vocabolarioMattivio.rda")
+# save(vocabolarioMattivio, file = "../data/vocabolarioMattivio.rda")
 
 load("../data/vocabolarioMattivio.rda")
 
@@ -68,30 +69,58 @@ dupes_2
 mattivio <- mattivio[!(duplicated(mattivio$keyword) | 
                          duplicated(mattivio$keyword, fromLast = TRUE)), ]
 
+# NOTE: removing now one remaining duplicated word (according to sentimentr::sentiment)
+
+mattivio <- mattivio[!(mattivio$keyword == "trucc"),]
+
+# NOTE: removing one dubious word ("not") (according to sentimentr::sentiment)
+
+mattivio <- mattivio[!(mattivio$keyword == "not"),]
+
+# Rename and coerce to data table
+
+textwill <- mattivio %>%
+  as.data.table()
+
 #### Save ####
 
-save(mattivio, file = "../results/mattivio.rda")
+save(textwill, file = "../results/textwill.rda")
 
 #### Sentimentr test ####
 
-## STILL NOT WORKING
-
 # Create dictionary 
 
-dic <- mattivio %>%
+textwill <- textwill %>%
   select(keyword, score) %>%
-  rename(x = keyword, y = score) %>%
-  as.data.table()
+  rename(x = keyword, y = score)
 
-dic$x <- tolower(dic$x)
+textwill$x <- tolower(textwill$x)
 
-dic <- as_key(dic)
+textwill <- as_key(textwill,
+              comparison = NULL)
 
-# Create text vector
+# Create text vector (not stemmed, manually stemmed, stemmed with SnowballC)
 
-text <- c("ciao bella", "mi piaci", "wow!!","good","casa", "farabutto!","ti odio")
+text <- c("ciao bella", "mi piaci", "wow!!", "good", "casa", "farabutto!", "ti odio")
+text_stem <- c("ciao bell", "mi piac", "wow!!", "good", "casa", "farabutto!","ti odi")
+text_stem1 <- SnowballC::wordStem(text, language = "italian")
 
 # Analyze 
 
-sentimentr::sentiment(text, polarity_dt = dic)
+sentimentr::sentiment(text, polarity_dt = textwill)
 
+# NOT WORKING: function seems to look for exact matches
+# Trying with stemmed words
+
+sentimentr::sentiment(text_stem, polarity_dt = textwill)
+sentimentr::sentiment(text_stem1, polarity_dt = textwill)
+
+# It works.
+
+#### textwiller::sentiment test ####
+
+TextWiller::sentiment(text = text, algorithm = "Mattivio", vocabularies = vocabolarioMattivio)
+
+# It works and is more accurate than sentimentr::sentiment (both 
+# with unstemmed text and with text stemmed with SnowballC) in
+# assigning a polarity score to the last sentence ("ti odio")
