@@ -67,7 +67,55 @@ e2 <- e2 %>%
   select(keyword1, code) %>%
   rename(keyword = keyword1)
 
-e2$keyword <- paste0("emote_", e2$keyword)
+e2$keyword <- paste0("emoji_", e2$keyword)
+
+#---
+
+#### Extract emoji, keyword and code ####
+
+e1 <- emoji %>% 
+  select(V2, V3, V15) %>%
+  relocate(V15, .before = V2) %>%
+  rename(keyword = V15, code = V2, emoji = V3)
+
+# Remove all rows containing headers
+
+e2 <- e1[(!e1$code == "Code") & (!e1$keyword == "CLDR Short Name"), ]
+
+# Remove NAs
+
+e2 <- na.omit(e2)
+
+# Split cells where "code" contains more than one element into separate columns
+# and only keep the first code string
+
+e2[c('code1', 'code2')] <- str_split_fixed(e2$code, ' ', 2)
+
+e2 <- e2 %>% 
+  select(keyword, code1, emoji) %>%
+  rename(code = code1)
+
+# Remove punctuation in "keyword" elements
+
+e2$keyword1 <- gsub(":", "", e2$keyword)
+e2$keyword1 <- tolower(e2$keyword1)
+e2$keyword1 <- to_snake_case(e2$keyword1)
+
+e2 <- e2 %>%
+  select(keyword1, code, emoji) %>%
+  rename(keyword = keyword1)
+
+e2$keyword <- paste0("emoji_", e2$keyword)
+e2 <- e2[order(e2$keyword), ]
+
+# Pull emoji list
+
+emoji_sym <- e2 %>%
+  pull(emoji)
+
+save(emoji_sym, file = "../results/textwill_emoji_sym.rda")
+
+#---
 
 # Convert to data table 
 
@@ -77,23 +125,6 @@ e2 <- e2 %>%
 #### Save ####
 
  # save(e2, file = "../results/textwill_emoji.rda")
-
-### KEEP EMOJI CHR
-
-e1_1 <- emoji %>% 
-  select(V2, V3, V15) %>%
-  relocate(V15, .before = V2) %>%
-  rename(keyword = V15, code = V2, emoji = V3)
-
-e1_2 <- e1_1[(!e1_1$code == "Code") & (!e1_1$keyword == "CLDR Short Name"), ]
-
-e1_2 <- na.omit(e1_2)
-
-e1_2[c('code1', 'code2')] <- str_split_fixed(e1_2$code, ' ', 2)
-
-e1_2 <- e1_2 %>% 
-  select(keyword, code1, emoji) %>%
-  rename(code = code1)
 
 #### POLARITY SCORE ####
 
@@ -210,7 +241,7 @@ lexicon_emoji_ranking <- lexicon::emojis_sentiment
   textwill_emoji_snake$keyword <- tolower(textwill_emoji_snake$keyword)
   textwill_emoji_snake$keyword <- to_snake_case(textwill_emoji_snake$keyword)
   
-  textwill_emoji_snake$keyword <- paste0("emote_", textwill_emoji_snake$keyword)
+  textwill_emoji_snake$keyword <- paste0("emoji_", textwill_emoji_snake$keyword)
     
 #### Save ####
 

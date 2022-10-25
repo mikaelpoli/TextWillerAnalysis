@@ -1,0 +1,7 @@
+x,y
+"([:=8]([- '])?[])Dd>]+)|(\\^[-_o]?\\^)"," EMOTEGOOD "
+"([:=]([- '])?[(|/x*[])|([>Xx#][._][>Xx<#])|(\\):)"," EMOTEBAD " 
+";-?[])>Ddo]"," EMOTEWINK "
+"\\*[-._o]\\*"," EMOTEAMAZE "
+"([:=]-?[pP]+)|(\\b[xX][dD]+\\b)|(\\bd:\\b)"," EMOTEJOKE "
+"[0Oo]+[\\._]+[0Oo]+"," EMOTESHOCK "
