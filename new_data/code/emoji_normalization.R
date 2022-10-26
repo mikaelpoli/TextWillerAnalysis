@@ -182,5 +182,29 @@ save(textwiller_emojis_sym_sentiment, file = "../results/textwiller_emojis_sym_s
 
 save(textwiller_style_emojis_sentiment, file = "../results/textwiller_style_emojis_sentiment.rda")
 
+#### FUNCTION ####
 
+# Load stopwords list
+data("itastopwords")
+
+# Normalize text using TextWiller
+s1 <- TextWiller::normalizzaTesti(spritz,
+                                  tolower = T,
+                                  normalizzahtml = T,
+                                  normalizzacaratteri = T,
+                                  normalizzaemote = F,
+                                  normalizzaEmoticons = F,
+                                  normalizzapunteggiatura = T,
+                                  normalizzaslang = T,
+                                  fixed = T,
+                                  perl = F,
+                                  encoding = "UTF-8",
+                                  remove = itastopwords,
+                                  removeUnderscore = F) 
+
+# Normalize emojis in s1 using textclean
+s2 <- textclean::replace_emoji(s1, emoji_dt = textwiller_hash_emojis)
+
+# Create dataframe of results
+df <- data.frame(spritz, s1, s2)
 
