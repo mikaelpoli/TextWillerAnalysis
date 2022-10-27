@@ -15,7 +15,9 @@ library(tidyverse)
 library(magrittr)
 library(TextWiller)
 
-load (file = "./data/spritz.Rdata")
+# setwd("./code")
+load(file = "../data/spritz.Rdata")
+
 ```
 
 TextWiller provides tools for text mining in Italian. This vignette illustrates the usage of each function.
@@ -44,8 +46,8 @@ and nine dictionaries:
 - Sentiment analysis:  
 
   * `vocabolariMadda`  
-  * `vocabolarioMattivio` (emoticons' scores)  
-  * `vocabolarioMattivio_ori (vocab_scores)` (emoticons' scores)  
+  * `vocabolarioMattivio`
+  * `vocabolarioMattivio_ori (vocab_scores)`
   
 - Text normalization:  
 
