@@ -142,13 +142,14 @@ emoji_conversion_ex_spritz <- data.frame(spritz, emoji_conversion_ex_spritz_text
 
 save(textwiller_emojis_sentiment_full, file = "../results/textwiller_emojis_sentiment_full.rda")
 
-# Textwiller_hash_emojis:
+# dizionario_emoji_id:
 
 # This dictionary contains:
 # x = byte representation of emojis
 # y = name of the emoji in the form "emoji_[cldr_short_name]"
 
-save(textwiller_hash_emojis, file = "../results/textwiller_hash_emojis.rda")
+dizionario_emoji_id <- textwiller_hash_emojis
+save(dizionario_emoji_id , file = "../results/dizionario_emoji_id.rda")
 
 # Textwiller_emojis_sentiment:
 

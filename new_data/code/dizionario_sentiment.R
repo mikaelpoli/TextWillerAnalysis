@@ -58,10 +58,10 @@ textwiller_dictionary <- rbind(textwiller_emojis, textwiller_dictionary)
 
 # Rename
 
-dizionario_sentiment <- textwiller_dictionary
+dizionario_sentiment_ita <- textwiller_dictionary
 
 #### Save ####
 
 # New TextWiller dictionary
 
-save(dizionario_sentiment, file = "../results/dizionario_sentiment.rda")
+save(dizionario_sentiment_ita, file = "../results/dizionario_sentiment_ita.rda")

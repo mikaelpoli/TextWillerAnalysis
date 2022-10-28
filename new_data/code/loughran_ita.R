@@ -1,5 +1,6 @@
 #### Packages ####
 
+library(tidyverse)
 library(data.table)
 library(sentimentr)
 library(TextWiller)
@@ -101,7 +102,27 @@ colnames(lexicon_loughran_ita) <- c("x", "y")
 
 #### Save ####
 
-save(lexicon_loughran_ita, file = "../results/lexicon_loughran_ita.rda")
+dizionario_loughran_ita_full <- lexicon_loughran_ita
+save(dizionario_loughran_ita_full, file = "../results/dizionario_loughran_ita_full.rda")
+
+#### BUILD POSITIVE-NEGATIVE-UNCERTAIN DICTIONARY ####
+
+dizionario_loughran_ita <- dizionario_loughran_ita_full[dizionario_loughran_ita_full$y %in% c("positive", "negative", "uncertainty"), ]
+
+#--- Assign weights to sentiment
+# NOTE: 
+# -1 = negative
+# 0 = uncertain
+# +1 = positive
+
+dizionario_loughran_ita$y <- gsub("positive", "1", dizionario_loughran_ita$y)
+dizionario_loughran_ita$y <- gsub("negative", "-1", dizionario_loughran_ita$y)
+dizionario_loughran_ita$y <- gsub("uncertainty", "0", dizionario_loughran_ita$y)
+dizionario_loughran_ita$y <- as.numeric(dizionario_loughran_ita$y)
+
+#### Save ####
+
+save(dizionario_loughran_ita, file = "../results/dizionario_loughran_ita.rda")
 
 #### BUILD POSITIVE-NEGATIVE DICTIONARY ####
 
@@ -123,7 +144,8 @@ lexicon_loughran_ita_pn <- setDT(lexicon_loughran_ita_pn)
 
 #### Save ####
 
-save(lexicon_loughran_ita_pn, file = "../results/lexicon_loughran_ita_pn.rda")
+dizionario_loughran_ita_pn <- lexicon_loughran_ita_pn
+save(dizionario_loughran_ita_pn, file = "../results/dizionario_loughran_ita_pn.rda")
 
 #### BUILD UNCERTAINTY DICTIONARY ####
 
@@ -190,7 +212,8 @@ rm(s, u, w, s_weight, u_weight, w_weight, u_s, u_w, w_u)
 
 #### Save #### 
 
-save(lexicon_loughran_ita_u, file = "../results/lexicon_loughran_ita_u.rda")
+dizionario_loughran_ita_u <- lexicon_loughran_ita_u
+save(dizionario_loughran_ita_u, file = "../results/dizionario_loughran_ita_u.rda")
 
 #### sentimentr::sentiment test ####
 
