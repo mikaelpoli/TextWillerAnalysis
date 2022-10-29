@@ -1,0 +1,31 @@
+DICTIONARIES
+
+Sentiment analysis:
+
+dizionario_sentiment_ita: This dictionary contains 3179 general Italian words and 1853 emojis. Type: data.table.
+	- keyword: Italian word or English emoji identifier, the latter in the form "emoji_cldr_short_name". Type: character.
+	- code: For emojis, their UTF-8 byte representation in the form <xx><xx><xx>. For words, its value is NA. Type: character.
+	- score: Polarity score. Range = -1, +1 where -1 = negative polarity and +1 = positive polarity. Words are classified as either negative (-1) or positive (+1). Emojis are classified using the full range of values (with 0 = neutral). Emoji scores were calulated using Gupta, Singh, and Ranjan's (2021) procedure as illustrated in "Emoji Score and Polarity Evaluation Using CLDR Short Name and Expression Sentiment" (doi:10.1007/978-3-030-73689-7): 1) Polarity scores for 676 emojis were retreived from lexicon::emojis_sentiment (Rinker, 2019), a slightly modified version of Novak, Smailovic, Sluban, & Mozetic's (2015) emoji sentiment data (doi:10.1371/journal.pone.0144296) ; 2) Using VADER (Roehrick, 2020), an additional polarity score was calculated for all 1853 emojis through a sentiment analysis of their CLDR short name; 3) The final polarity score therefore is: the VADER score for emojis that do not appear in lexicon::emojis_sentiment (n = 1177); the arithmetic mean of the VADER and lexicon::emojis_sentiment scores for the remaining emojis (n = 676). All emojis were retrieved from: http://www.unicode.org/emoji/charts/full-emoji-list.html. Type: numeric.
+	- ngram: Order of the n-gram appearing in the "keyword" variable, calculated as the number of words that compose it. Type: integer.
+
+dizionario_laughran_ita: Italian translation of the Loughran-McDonald dictionary for use with finalcial documents. Type: data.table.
+	- x: Word. Type: character.
+	- y: Polarity score (values: -1 = negative, 0 = uncertain, +1 = positive). Type: numeric.
+
+---
+
+Text normalization:
+
+dizionario_emoji_id: This dataset contains 1853 emojis and their respective byte representation. It is compatible with textclean::replace_emoji() and can be used as a value for the "emoji_dt" argument for text normalization, returning emojis in a document as their CLDR short name. It represents an expansion of the lexicon::hash_emoji dataset. Type: data.table. 
+	- x: UTF-8 byte representation in the form <xx><xx><xx>. Type: character.
+	- y: Emoji identifier in the form "emoji_cldr_short_name". Type: character.
+
+stopwords_ita: A character list of italian stopwords for use in text normalization.
+
+---
+
+Text categorization:
+
+vocabolarioLuoghi: As a value of the "vocabolario" argument in TextWiller::classificaUtenti(), it categorizes city names contained in a character vector according to their location (“Estero” for non-Italian cities, “Nord-ovest”, “Nord-est”. “Centro”, “Sud”, “Isole” for Italian cities).
+
+vocabolarioNomiPropri: As a value of the "vocabolario" argument in TextWiller::classificaUtenti(), it categorizes (Italian) first names contained in a character vector as either “male” or “female”.

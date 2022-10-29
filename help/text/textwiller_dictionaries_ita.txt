@@ -1,0 +1,31 @@
+DIZIONARI
+
+Sentiment analysis:
+
+dizionario_sentiment_ita: Questo vocabolario contiene 3179 parole italiane e 1853 emoji. Tipo: data.table.
+	- keyword: Parola italiana o identificativo emoji, quest'ultimo in inglese nella forma "emoji_cldr_short_name". Tipo: character.
+	- code: Stringa byte UTF-8 nella forma <xx><xx><xx>, che rappresenta ciascuna emoji. Per le parole, il suo valore è NA. Tipo: character.
+	- score: Polarità degli item o "punteggio sentiment". Range = -1, +1 dove -1 = polarità negativa e +1 = polarità positiva. Le parole italiane sono classificate come negative (-1) o positive (+1). Le emoji sono classificate utilizzando l'intero range di valori (con 0 = neutrale). Il punteggio sentiment delle emoji è stato calcolato utilizzando la procedura di Gupta, Singh, and Ranjan's (2021) illustrata in "Emoji Score and Polarity Evaluation Using CLDR Short Name and Expression Sentiment" (doi:10.1007/978-3-030-73689-7): 1) Il punteggi di 676 emojis sono stati recuperati da lexicon::emojis_sentiment (Rinker, 2019), una versione leggermente modificata del dataset di sentiment delle emoji di Novak, Smailovic, Sluban, & Mozetic's (2015) (doi:10.1371/journal.pone.0144296) ; 2) Utilizzando VADER (Roehrick, 2020) è stato calcolato un ulteriore punteggio sentiment per tutte le 1853 emoji tramite una sentiment analysis del loro identificativo ("CLDR short name"); 3) Il punteggio sentiment finale è dato dunque da: il punteggio VADER per le emoji che non compaiono in lexicon::emojis_sentiment (n = 1177); la media aritmetica dei punteggi VADER e lexicon::emojis_sentiment per le emoji restanti (n = 676). La lista di emoji è stata recuperata da: http://www.unicode.org/emoji/charts/full-emoji-list.html. Tipo: numeric.
+	- ngram: Ordine dell'n-gramma che compare nella variabile "keyword", calcolato come il numero di parole da cui è composta. Tipo: integer.
+
+dizionario_laughran_ita: Traduzione italiana del vocabolario Loughran-McDonald per la sentiment analysis di documenti finanziari. Tipo: data.table.
+	- x: Parola. Tipo: character.
+	- y: Polarità degli item o "punteggio sentiment" (valori: -1 = negativo, 0 = incerto, +1 = positivo). Tipo: numeric.
+
+---
+
+Normalizzazione del testo:
+
+dizionario_emoji_id: Questo dataset contiene 1853 emoji e la loro relativa rappresentazione UTF-8 in byte. E' compatibile con textclean::replace_emoji() e può essere utilizzato come valore dell'argomento "emoji_dt" per la normalizzazione del testo, restituendo il nome inglese delle emoji contenute nel documento nella forma "emoji_cldr_short_name". Rappresenta un'espansione del dataset lexicon::hash_emoji. Tipo: data.table. 
+	- x: Stringa byte UTF-8 nella forma <xx><xx><xx>. Tipo: character.
+	- y: Nome emoji inglese nella forma "emoji_cldr_short_name". Tipo: character.
+
+stopwords_ita: Lista di stopword italiane da utlizzare per la normalizzazione del testo. Tipo: character.
+
+---
+
+Categorizzazione:
+
+vocabolarioLuoghi: Come valore dell'argomento "vocabolario" nella funzione TextWiller::classificaUtenti(), categorizza elementi di vettori di tipo character contententi nomi di città in base alla loro posizione geografica (“Estero” per quelle non italiane, “Nord-ovest”, “Nord-est”, “Centro”, “Sud”, “Isole” per quelle italiane).
+
+vocabolarioNomiPropri: Come valore dell'argomento "vocabolario" nella funzione TextWiller::classificaUtenti(), categorizza elementi di vettori di tipo character contenenti nomi propri italiani come "Maschio" o "Femmina".

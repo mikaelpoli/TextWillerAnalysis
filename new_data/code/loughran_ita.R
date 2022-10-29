@@ -122,6 +122,10 @@ dizionario_loughran_ita$y <- as.numeric(dizionario_loughran_ita$y)
 
 #### Save ####
 
+# Convert to data.table 
+
+dizionario_loughran_ita <- as.data.table(dizionario_loughran_ita)
+
 save(dizionario_loughran_ita, file = "../results/dizionario_loughran_ita.rda")
 
 #### BUILD POSITIVE-NEGATIVE DICTIONARY ####
