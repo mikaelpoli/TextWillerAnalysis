@@ -1,5 +1,7 @@
 #### PACKAGES ####
 
+library(tidyverse)
+
 #### wd ####
 
 # WD must be TextWillerAnalysis/functions/code
